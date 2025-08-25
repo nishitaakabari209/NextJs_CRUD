@@ -1,70 +1,71 @@
-"use client"
-import React, { useState, useEffect } from "react";
+"use client";
+import { useDispatch } from "react-redux";
+import { addContact } from "@/store/store"; 
+import { v4 as uuidv4 } from "uuid";
+import { useState } from "react";
 
-function Contact() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+export default function ContactForm() {
+  const dispatch = useDispatch();
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
 
   const handleSubmit = (e: React.FormEvent) => {
-    //  e.preventDefault();
-    localStorage.setItem("UserName", name);
-    localStorage.setItem("UserEmail", email);
-    alert("Data saved in localStorage");
+    e.preventDefault();
+    dispatch(addContact({ id: uuidv4(), ...form }));
+    setForm({ name: "", email: "", message: "" });
+    alert("Contact saved successfully!");
   };
-  useEffect(() => {
-    const savedName = localStorage.getItem("UserName");
-    const savedEmail = localStorage.getItem("UserEmail");
-    
-    if (savedName) setName(savedName);
-    if (savedEmail) setEmail(savedEmail);
-  }, []);
 
   return (
-<div className="container mt-5">
-<div className="row justify-content-center">
-<div className="col-md-6">
-<div className="card shadow-lg border-0 rounded-3">
-<div className="card-body p-4">
- <h3 className="card-title text-center mb-4 text-dark ">
-  Contact us</h3>
-              <hr />
-<form onSubmit={handleSubmit}>
-
-<div className="mb-3">
-<label className="form-label">
-First Name
-</label>
-<input type="text"id="firstName"className="form-control"placeholder="Enter first name"value={name} onChange={(e) => setName(e.target.value)} />
- </div>
-
-<div className="mb-3">
-    <label className="form-label">
-                    Email
-    </label>
-    <input type="email" id="email" className="form-control" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-
-<div className="d-grid">
-<button type="submit"className="btn bg-primary-subtle border border-primary ">
-Submit</button>
-                </div>
-              </form>
-              <div className="mt-3">
-                <h6>Saved Data:</h6>
-                <p>
-                  <b>Name:</b> {name}
-                </p>
-                <p>
-                  <b>Email:</b> {email}
-                </p>
-              </div>
+    <div className="container mt-5 d-flex justify-content-center">
+      <div className="card shadow-lg border-0" style={{ maxWidth: "500px", width: "100%" }}>
+        <div className="card-header bg-primary-subtle text-dark text-center ">
+          <h4 className="p-2">Contact Us</h4>
+        </div>
+        <div className="card-body p-4">
+          <form onSubmit={handleSubmit} className="d-flex flex-column gap-3">
+            
+            <div className="form-group">
+              <label className="form-label fw-bold">Name</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter your name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                required
+              />
             </div>
-          </div>
+
+            <div className="form-group">
+              <label className="form-label fw-bold">Email</label>
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Enter your email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label fw-bold">Message</label>
+              <textarea
+                className="form-control"
+                rows={4}
+                placeholder="Enter your message"
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn bg-primary-subtle border border-primary w-100">
+              Submit
+            </button>
+          </form>
         </div>
       </div>
     </div>
   );
 }
-
-export default Contact;
